@@ -1,0 +1,61 @@
+# --- KiCad Backups & Temporary Files ---
+# File backup cũ
+*.bak
+*.bck
+*-bak
+*_autosave-*
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*.sch-bak
+
+# File tạm (Temporary files)
+*.tmp
+*.kicad_prl
+# .kicad_prl lưu các thiết lập hiển thị cục bộ (zoom, layer active). 
+# Nên ignore để tránh conflict khi nhiều người cùng làm hoặc khi bạn mở trên máy khác.
+
+# File khóa (Lock files) - Ngăn mở cùng lúc
+*.lck
+
+# --- Cache Files (Rất quan trọng phải ignore) ---
+# Cache thông tin footprint, KiCad sẽ tự tạo lại khi mở project.
+# File này thay đổi liên tục, nếu commit sẽ làm rác lịch sử git.
+fp-info-cache
+
+# --- Generated Output Files (File xuất ra để sản xuất) ---
+# Thông thường ta không commit file sản xuất (Gerber), chỉ commit file thiết kế nguồn.
+# Nếu bạn muốn lưu Gerber, hãy Zip lại và đưa vào phần "Releases" của Github/Gitlab.
+
+# Gerber files
+*.gbr
+*.gbl
+*.gbs
+*.gbp
+*.gbo
+*.gtl
+*.gts
+*.gtp
+*.gto
+*.gm*
+*.drl
+*.dri
+*.pos
+*.do
+*.syko
+
+# Report files (File báo cáo lỗi DRC, ERC)
+*.rpt
+*.drc
+*.erc
+
+# Netlists (File netlist tạo ra từ schematic)
+*.net
+
+# Simulation files (Nếu bạn dùng ngspice)
+*.wbk
+*.spice
+*.sp
+
+# --- OS Specific (Hệ điều hành) ---
+.DS_Store
+Thumbs.db
