@@ -17,10 +17,10 @@ In addition to the main power rail, the board integrates an auxiliary **3.3V LDO
 
 | Parameter | Value | Notes |
 | :--- | :--- | :--- |
-| **Input Voltage ($V_{IN}$)** | 10V - 35V | Recommended operating range. |
-| **Output Voltage 1** | **5.0V/12V** | Regulated via TPS5430 Buck Converter. |
-| **Output Current 1** | Max **3A** | High-efficiency switching mode. |
-| **Output Voltage 2** | **3.3V** | Regulated via AMS1117/LM1117 LDO. |
+| **Input Voltage ($V_{IN}$)** | 14.4V - 25.2V | Recommended operating range. |
+| **Output Voltage Primary** | **5.0V/12V** | Regulated via TPS5430 Buck Converter. |
+| **Output Voltage AUX** | **3.3V** | Regulated via LM1117 LDO. |
+| **Output Current** | Max **3A** | High-efficiency switching mode. |
 | **Switching Frequency** | 500 kHz | Fixed internal oscillator. |
 
 ---
@@ -62,15 +62,14 @@ A low-side shunt resistor is integrated into the design layout to facilitate cur
 ```text
 BTL_DTCSUD/
 ├── docs/                       # Documentation & Report files
-│   └── conference-template-a4.docx
+│   └── ...
 ├── Kicad/                      # Hardware Design Files
 │   └── Buck_TPS5430_Project/
 │       ├── *.kicad_sch         # Schematic file
 │       ├── *.kicad_pcb         # PCB Layout file
 │       └── ...
 ├── reference/                  # Datasheets & Assignment Requirements
-│   ├── Bai tap lon 1.docx      # Project Requirements
-│   └── tps5430.pdf             # Main IC Datasheet
+│   └── ...
 ├── .gitignore                  # Git ignore configuration
 └── README.md                   # Project documentation
 ```
@@ -90,7 +89,7 @@ Choose one of the following methods to download the source code:
 **Option 1: Clone via Git (Recommended) 🧑‍💻**
 This method is best if you want to easily update the project later or contribute changes.
 ```bash
-git clone [https://github.com/nhq441/design_TPS5430_regulator.git](https://github.com/nhq441/design_TPS5430_regulator.git)
+git clone https://github.com/nhq441/design_TPS5430_regulator.git
 ```
 
 **Option 2: Download ZIP 📦**
