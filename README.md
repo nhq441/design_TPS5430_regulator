@@ -71,6 +71,7 @@ BTL_DTCSUD/
 ├── reference/                  # Datasheets & Assignment Requirements
 │   └── ...
 ├── .gitignore                  # Git ignore configuration
+├── GIT_GUIDE                   # Guide documentation
 └── README.md                   # Project documentation
 ```
 
