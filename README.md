@@ -1,15 +1,55 @@
-# TPS5430 Buck Converter Module
+# TPS5430 Dual Buck Converter Module
 
-![Status](https://img.shields.io/badge/Status-Work%20In%20Progress-orange)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
 ![KiCad](https://img.shields.io/badge/EDA-KiCad_9.0+-blue)
 ![License](https://img.shields.io/badge/License-Educational-green)
+![IC](https://img.shields.io/badge/IC-TPS5430_%C3%972-red)
+![Vin](https://img.shields.io/badge/Vin-14.4V--25.2V-yellow)
+![Vout](https://img.shields.io/badge/Vout-3.3V_%7C_5V_%7C_12V-purple)
+![Iout](https://img.shields.io/badge/Iout-3A_max-orange)
+![Fsw](https://img.shields.io/badge/Fsw-500kHz-lightblue)
+
+---
 
 ## 📖 Introduction
-This project focuses on the design and implementation of a **Step-down (Buck) DC-DC power supply module** utilizing the **Texas Instruments TPS5430** IC. The module is engineered to accept a wide input voltage range (up to 35V) and convert it into a stable **5V output** capable of delivering up to **3A** of continuous current.
 
-In addition to the main power rail, the board integrates an auxiliary **3.3V LDO** linear regulator to power low-voltage logic circuits, making it suitable for modern microcontrollers such as the ESP32 or STM32.
+This project presents the design and implementation of a **DC/DC Buck Converter (Step-Down) Power Supply Module** using **two Texas Instruments TPS5430** ICs. The module accepts a wide input voltage range of **14.4V – 25.2V** and delivers multiple regulated output rails suitable for embedded systems and microcontroller-based applications.
 
-**Course Context:** Major Assignment 1 (Bài tập lớn 1) - Course Code: `BTL_DTCSUD`.
+Key features include a **3-mode adjustable main output (VP)**, dual auxiliary LDO rails, a **Power Good LED indicator**, and a **configurable overcurrent protection** threshold set via a shunt resistor.
+
+**Course:** Power Electronics and Applications — Course Code: `BTL_DTCSUD`
+
+---
+
+## 🖼️ PCB Images
+
+### Schematic Overview
+> 📷 *[Insert full schematic image here]*
+
+---
+
+### PCB Layout — Top Layer
+<img width="951" height="677" alt="image" src="https://github.com/user-attachments/assets/e8deac5c-959e-4de4-999b-f91b19d99dd1" />
+
+
+---
+
+### PCB Layout — Bottom Layer
+<img width="951" height="677" alt="image" src="https://github.com/user-attachments/assets/356c21df-f1db-49d4-b3e9-93e6744f4099" />
+
+
+---
+
+### 3D Render
+<img width="1184" height="881" alt="image" src="https://github.com/user-attachments/assets/3718d535-6884-40cc-8554-7f9df016935c" />
+
+<img width="1184" height="881" alt="image" src="https://github.com/user-attachments/assets/60e26b26-7153-46f1-80bd-1a86d4939a92" />
+
+
+---
+
+### Assembled Board
+> 📷 *[Insert photo of the soldered/assembled board here]*
 
 ---
 
@@ -17,43 +57,67 @@ In addition to the main power rail, the board integrates an auxiliary **3.3V LDO
 
 | Parameter | Value | Notes |
 | :--- | :--- | :--- |
-| **Input Voltage ($V_{IN}$)** | 14.4V - 25.2V | Recommended operating range. |
-| **Output Voltage Primary** | **5.0V/12V** | Regulated via TPS5430 Buck Converter. |
-| **Output Voltage AUX** | **3.3V** | Regulated via LM1117 LDO. |
-| **Output Current** | Max **3A** | High-efficiency switching mode. |
-| **Switching Frequency** | 500 kHz | Fixed internal oscillator. |
+| **Input Voltage ($V_{IN}$)** | 14.4V – 25.2V | Recommended operating range |
+| **Main Output VP** | **5V / 12V / 3.3–12V** | 3 selectable modes |
+| **VP Output Current** | Max **3A** | High-efficiency switching mode |
+| **Auxiliary Output 1** | **5V** | Via LDO, for logic circuits |
+| **Auxiliary Output 2** | **3.3V** | Via LDO, for MCUs (ESP32, STM32, etc.) |
+| **Switching Frequency** | 500 kHz | Fixed internal oscillator |
+| **Buck IC** | 2× TPS5430 | Texas Instruments |
+| **Overcurrent Protection** | Configurable | Set via shunt resistor value |
+| **Power Good Indicator** | LED (VP rail) | Signals stable output on VP |
 
 ---
 
-## 🛠️ Design Considerations
+## 🛠️ Design Details
 
-### 1. Enable Pin Configuration (TPS5430)
-The **ENA pin (Pin 5)** is configured with a mechanical switch to control the operation of the regulator:
-* **ON State:** Switch Open (Floating). The internal pull-up source enables the device.
-* **OFF State:** Switch Closed (Connected to GND). The device stops switching when voltage is $< 0.5V$.
+### 1. Dual TPS5430 Architecture
 
-> **⚠️ CRITICAL WARNING:**
-> Do **NOT** connect an external pull-up resistor from the ENA pin to the main input ($V_{IN}$). The absolute maximum rating for the ENA pin is **7V**. Connecting it to 12V or 24V will permanently damage the IC.
+The module employs **two independent TPS5430 ICs**:
+- **IC1:** Drives the main output rail **VP**, supporting 3 selectable voltage modes.
+- **IC2:** *(Describe the role of the second IC here — e.g., secondary rail, redundancy, or higher current capacity)*
 
-### 2. Feedback Network Calculation
-To ensure a precise 5V output, the voltage divider network ($R_1, R_2$) connected to the **VSENSE** pin is calculated based on the internal reference voltage ($V_{ref} = 1.221V$):
+### 2. Three-Mode Main Output (VP)
 
-* **$R_1$ (Top Resistor):** $10k\Omega$ (Recommended fixed value).
-* **$R_2$ (Bottom Resistor):** using the standard transfer formula:
+The VP rail supports three operating modes, selected via a switch or jumper:
+
+| Mode | Output Voltage | Configuration |
+| :---: | :---: | :--- |
+| **Mode 1** | **5V** | Fixed feedback resistor network |
+| **Mode 2** | **12V** | Fixed feedback resistor network |
+| **Mode 3** | **3.3V – 12V** | Adjustable via potentiometer |
+
+### 3. Feedback Network Calculation
+
+The output voltage is set by a resistor divider ($R_1$, $R_2$) connected to the **VSENSE** pin, based on the internal reference $V_{ref} = 1.221V$:
+
+$$V_{OUT} = V_{ref} \times \left(1 + \frac{R_1}{R_2}\right)$$
+
+**With $R_1 = 10k\Omega$ (fixed):**
+
+- **5V Mode:**
 
 $$R_2 = \frac{R_1 \times V_{ref}}{V_{OUT} - V_{ref}} = \frac{10000 \times 1.221}{5.0 - 1.221} \approx 3.24k\Omega$$
 
-Similar with 12V ouput:
+- **12V Mode:**
 
-$$R_2 = 1.23k\Omega$$
+$$R_2 = \frac{10000 \times 1.221}{12.0 - 1.221} \approx 1.13k\Omega$$
 
-### 3. LDO Thermal Management (3.3V Rail)
-The input of the 3.3V LDO is cascaded from the **5V Buck output**, rather than the main high-voltage input ($V_{IN}$).
-* **Reasoning:** This minimizes the voltage drop across the linear regulator ($V_{drop} = 5V - 3.3V = 1.7V$).
-* **Benefit:** Significantly reduces power dissipation ($P_D = V_{drop} \times I_{load}$), allowing the use of smaller packages (e.g., SOT-223) without overheating.
+- **Variable Mode:** $R_2$ is replaced with a **5kΩ potentiometer in series with a 1kΩ fixed resistor**, allowing continuous adjustment from **3.3V to 12V**.
 
-### 4. Current Sensing
-A low-side shunt resistor is integrated into the design layout to facilitate current monitoring. The measurement node is labeled **ISENSE**.
+### 4. Auxiliary LDO Outputs (5V & 3.3V)
+
+Both LDO regulators are cascaded from the **5V Buck output**, not directly from $V_{IN}$:
+- **Reason:** Reduces the voltage drop across each LDO, minimizing power dissipation ($P_D = \Delta V \times I_{load}$).
+- **Benefit:** Allows the use of compact packages (e.g., SOT-223) without thermal issues.
+
+### 5. Power Good LED Indicator
+
+A **Power Good LED** is connected to the VP rail. The LED lights up when VP reaches its target voltage, confirming stable regulation before connecting a load.
+
+### 6. Configurable Overcurrent Protection
+
+A **low-side shunt resistor** sets the overcurrent trip threshold. Changing the resistor value adjusts the protection level to match the target application's requirements. The sensing node is labeled **ISENSE** in the schematic.
 
 ---
 
@@ -64,60 +128,55 @@ BTL_DTCSUD/
 ├── docs/                       # Documentation & Report files
 │   └── ...
 ├── Kicad/                      # Hardware Design Files
-│   └── Buck_TPS5430_Project/
+│   └── Buck_TPS5430/
 │       ├── *.kicad_sch         # Schematic file
 │       ├── *.kicad_pcb         # PCB Layout file
 │       └── ...
-├── reference/                  # Datasheets & Assignment Requirements
+├── reference/                  # Datasheets & Assignment requirements
 │   └── ...
-├── .gitignore                  # Git ignore configuration
-├── GIT_GUIDE                   # Guide documentation
-└── README.md                   # Project documentation
+├── .gitignore
+├── GIT_GUIDE
+└── README.md
 ```
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-Before you begin, ensure you have the following software installed:
-* **[KiCad EDA](https://www.kicad.org/)**: Version 9.0 is highly recommended for compatibility.
-* **[Git](https://git-scm.com/)**: For version control and repository management.
+- **[KiCad EDA](https://www.kicad.org/)** — Version 9.0 or higher recommended
+- **[Git](https://git-scm.com/)** — For version control
 
-### 📥 Installation
+### Installation
 
-#### Step 1: Get the Project Files
-Choose one of the following methods to download the source code:
-
-**Option 1: Clone via Git (Recommended) 🧑‍💻**
-This method is best if you want to easily update the project later or contribute changes.
+**Option 1: Clone via Git (Recommended)**
 ```bash
 git clone https://github.com/nhq441/design_TPS5430_regulator.git
 ```
 
-**Option 2: Download ZIP 📦**
-Choose this if you are not familiar with Git or just want the files quickly without version control.
+**Option 2: Download ZIP**
 1. Click the green **<> Code** button at the top right of this repository page.
-2. Select **Download ZIP** from the dropdown menu.
-3. Extract the downloaded `.zip` file to your working directory.
+2. Select **Download ZIP**.
+3. Extract the `.zip` file to your working directory.
 
-#### Step 2: Open the Project 📂
-Once you have the files on your computer:
+### Opening the Project
 1. Launch **KiCad**.
-2. Navigate to the project directory: `Kicad/Buck_TPS5430_Project/`
-3. Open the project file: `Buck_TPS5430_Project.kicad_pro`
+2. Navigate to: `Kicad/Buck_TPS5430/`
+3. Open: `Buck_TPS5430.kicad_pro`
 
 ---
 
 ## 🤝 Contributing
 
-This project follows the standard **Gitflow Workflow** to ensure organized development:
+This project follows the **Gitflow Workflow**:
 
-* **`main`**: Reserved for stable, production-ready code/designs.
-* **`develop`**: The primary integration branch for ongoing work.
-* **`feature/*`**: Branches for specific tasks or features (e.g., `feature/Schematic`, `feature/PCB-Layout`).
-    * *Please create feature branches from `develop` and merge back via Pull Request.*
+- **`main`**: Stable, verified designs only.
+- **`develop`**: Primary integration branch for ongoing work.
+- **`feature/*`**: Individual feature branches (e.g., `feature/Schematic`, `feature/PCB-Layout`).
+  - Always branch from `develop` and merge back via Pull Request.
 
 ---
 
 ## 📄 License
 
-This project is developed strictly for **educational purposes** within the scope of the **"Power Electronics and Applications"** course.
+This project is developed for **educational purposes** within the scope of the **Power Electronics and Applications** course.
